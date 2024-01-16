@@ -1,0 +1,60 @@
+#!/usr/bin/bpftrace
+
+kprobe:__netif_receive_skb
+{
+	$a = (struct sk_buff *) arg0;
+	$s = (struct sock *) $a -> sk;
+
+	@time0[$s] = nsecs;
+}
+
+kprobe:ip_rcv
+{
+	$b = (struct sk_buff *) arg0;
+	$s = (struct sock *) $b -> sk;
+
+	if (@time0[$s] > 0)
+	{
+		@time1[$s] = nsecs;
+  	}
+}
+
+kprobe:tcp_v4_rcv
+{
+	$c = (struct sk_buff *) arg0;
+	$s = (struct sock *) $c -> sk;
+
+	if (@time1[$s] > 0)
+	{
+		@time2[$s] = nsecs;
+  	}
+}
+
+kprobe:tcp_recvmsg
+{
+
+	$d = (struct socket *) arg0;
+	$s = (struct sock *) $d -> sk;
+
+	if (@time2[$s] > 0)
+	{
+		@time3[$s] = nsecs;
+
+		$latency = (@time3[$s] - @time1[$s]) / 1e3;
+
+		printf("--- Receive Latency : %ld µs\n", $latency);
+		@latency_histogram = hist($latency);
+		
+		delete(@time0[$s]);
+		delete(@time1[$s]);
+		delete(@time2[$s]);
+		delete(@time3[$s]);
+	}
+}
+
+END {
+	clear(@time0);
+	clear(@time1);
+	clear(@time2);
+	clear(@time3);
+}
