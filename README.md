@@ -1,7 +1,7 @@
 
 # linux-kernel-networking-stack
 
-In this project, We're going to evaluate the performance of the Linux kernel's network functions in two parts: send flow and receive flow, using eBPF.
+In this project, We're going to trace and evaluate the performance of the Linux kernel's network functions in two parts: send flow and receive flow, using eBPF.
 <br/>
 
 **Table of contents:**
