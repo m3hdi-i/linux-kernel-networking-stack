@@ -1,4 +1,5 @@
 
+
 # linux-kernel-networking-stack
 
 In this project, We're going to trace and evaluate the performance of the Linux kernel's network functions in two parts: send flow and receive flow, using eBPF.
@@ -105,12 +106,12 @@ netif\_receive\_skb() finds out how to pass the sk\_buff to upper layers.
 
 The packet handlers are called with the deliver\_skb() function, which calls the protocol's func virtual method to handle the packet.
 
-## Layer 3: Network layer (IPv4, ARP)
+**Layer 3: Network layer (IPv4, ARP)**
 
-**ARP** <br/>
+**ARP:** <br/>
 ARP packets are handled with arp\_rcv(). It processes the ARP information, stores it in the neighbour cache, and sends a reply if required. In the latter case, a new sk\_buff (with new data space) is allocated for the reply.
 
-**IPv4** <br/>
+**IPv4:** <br/>
 IPv4 packets are handled with ip\_rcv(). It parses headers, checks for validity, sends an ICMP reply or error message if required. It also looks up the destination address using ip\_route\_input(). The destination's input virtual method is called with the sk\_buff.
 
 - ip\_mr\_input() is called for multicast addresses. The packet may be forwarded using ip\_mr\_forward(), and it may be delivered locally using ip\_local\_delivery().
