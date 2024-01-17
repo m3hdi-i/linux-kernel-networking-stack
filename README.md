@@ -30,7 +30,7 @@ In the Linux kernel, many functions are used to process network packets. Here we
 <br/>
 
 
-## Transmission path
+## Send flow
 
 **Layer 5: Session layer (sockets and files)**
 
